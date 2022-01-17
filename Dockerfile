@@ -10,7 +10,7 @@ FROM tiangolo/uwsgi-nginx:python3.8-alpine-2020-12-19
 ENV LISTEN_PORT=5000
 EXPOSE 5000
 
-# Indicate where uwsgi.ini lives
+# Indicate where uwsgi.ini lives kjdbvj jsklfvwf
 ENV UWSGI_INI uwsgi.ini
 
 # Tell nginx where static files live. Typically, developers place static files for
