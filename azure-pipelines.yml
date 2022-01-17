@@ -14,7 +14,7 @@ variables:
   imageRepository: 'idfpythonsamplevscodeflasktutorial'
   containerRegistry: 'visfordengery.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
+  tag: '1.0.$(Build.BuildId)'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
