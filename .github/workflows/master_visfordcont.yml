@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - visfordcont
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://fordtester.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_c0d3cd2fb83c4cb384ae6dbd5388eb83 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_d35f1dcca24c43d79fbabc4d70ea7ae6 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: fordtester.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_c0d3cd2fb83c4cb384ae6dbd5388eb83 }}/fordrreg.azurecr.io/testernginx2:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'visfordcont'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_e8f3b85eb38643b098004480e3b03a1e }}
+        images: 'fordtester.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_c0d3cd2fb83c4cb384ae6dbd5388eb83 }}/fordrreg.azurecr.io/testernginx2:${{ github.sha }}'
